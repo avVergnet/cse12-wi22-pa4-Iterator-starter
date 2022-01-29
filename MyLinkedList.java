@@ -297,63 +297,134 @@ public class MyLinkedList<E> extends AbstractList<E> {
 
         // MyListIterator methods
 
-		//Constructor that is used to initialize the iterator.
+		//Constructor that is used to initialize the iterator. 
 		public MyListIterator(){
-
+			left = head;
+			right = head.getNext();
+			idx = 0;
+			forward = true;
+			canRemoveOrSet = false;
 		}
 
 		//Return true if there is an element node when going in the forward (head to tail) direction from the current iterator position. Sentinel (dummy) nodes do not count as element nodes.
         public boolean hasNext() {
-
-			return true;
+			if(this.nextIndex() != size){
+				return true;
+			} return false;
         }
 
-		//Return the next element in the list when going forward, and move the iterator forward by one node.
+		/* Moves the iterator forward by one node.
+		 * @return the next element in the list when going forward
+		 */
 		public E next(){
-			//Throw a NoSuchElementException if there is no such element.
-			return null;
+			if(this.hasNext() == false){
+				throw new NoSuchElementException();
+			}
+			//update pointers
+			left = right;
+			right = right.getNext();
+			//update idx
+			idx++;
+			//update instance variables
+			canRemoveOrSet = true;
+			forward = true;
+			return left.getElement();
 		}
 
 		//Return true if there is an element node when going in the backward (tail to head) direction from the current iterator position. Sentinel (dummy) nodes do not count as element nodes.
 		public boolean hasPrevious(){
-			return false;
+			if(this.previousIndex() != -1){
+				return true;
+			} return false;
 		}
 
 		//Return the next element in the list when going backward, and move the iterator backward by one node.
 		public E previous(){
-			//Throw a NoSuchElementException if there is no such element.
-			return null;
+			if(this.hasPrevious() == false){
+				throw new NoSuchElementException();
+			}
+			//update pointers
+			right = left;
+			left = left.getPrev();
+			//update idx
+			idx--;
+			//update instance variables
+			canRemoveOrSet = true;
+			forward = false;
+			return right.getElement();
 		}
 
 		//Return the index of the element that would be returned by a call to next().
 		//Return the list size if at the end of the list.
 		public int nextIndex(){
-			return 0;
+			if(right == tail){
+				return size;
+			} return idx+1;
 		}
 
 		//Return the index of the element that would be returned by a call to previous().
 		//Return -1 if at the start of the list.
 		public int previousIndex(){
-			return 0;
+			if(left == head){
+				return -1;
+			} return idx-1;
 		}
 
 		//Insert the given item into the list immediately before the element that would be returned by next()
 		//If we call previous() immediately following add, the newly added item would be returned.
 		//The value of the current index of the list iterator is increased by one.
 		public void add(E element){
-			//Throw a NullPointerException if element is null.
+			if(element == null){
+				throw new NullPointerException();
+			}
+			Node addedNode = new Node(element);
+			//upadate pointers
+			left.setNext(addedNode);
+			addedNode.setPrev(left);
+			right.setPrev(addedNode);
+			addedNode.setNext(right);
+			//update instance variables
+			left = addedNode;
+			canRemoveOrSet = false;
+			idx++;
+			size++; 
 		}
 
 		//For the node returned by the most recent next/previous call, replace its value with the new value element.
 		public void set(E element){
-			//Throw a NullPointerException if element is null.
-			//Throw an IllegalStateException if neither next nor previous were called, or if add or remove have been called since the most recent next/previous call.
+			if(element == null){
+				throw new NullPointerException();
+			}
+			if(canRemoveOrSet == false){
+				throw new IllegalStateException();
+			}
+			if(forward == true){
+				left.setElement(element);
+			} else {
+				right.setElement(element);
+			}
 		}
 
 		//Remove the last element node returned by the most recent next/previous call.
 		public void remove(){
-			//Throw an IllegalStateException if neither next nor previous were called, or if add or remove have been called since the most recent next/previous call.
-		}
-
+			if(canRemoveOrSet == false){
+				throw new IllegalStateException();
+			}
+			if(forward == true){
+				left.getPrev().setNext(right);
+				right.setPrev(left.getPrev());
+				left.setNext(null);
+				left.setPrev(null);
+				left = right.getPrev();
+			} else {
+				right.getNext().setPrev(left);
+				left.setNext(right.getNext());
+				right.setNext(null);
+				right.setPrev(null);
+				right = left.getNext();
+			}
+			size--;
+			canRemoveOrSet = false;
+		} //TODO does idx need to be updated?
 	}
 }
