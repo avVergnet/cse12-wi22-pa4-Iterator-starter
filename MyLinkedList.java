@@ -308,9 +308,9 @@ public class MyLinkedList<E> extends AbstractList<E> {
 
 		//Return true if there is an element node when going in the forward (head to tail) direction from the current iterator position. Sentinel (dummy) nodes do not count as element nodes.
         public boolean hasNext() {
-			if(this.nextIndex() != size){
-				return true;
-			} return false;
+			if(right == tail){
+				return false;
+			} return true;
         }
 
 		/* Moves the iterator forward by one node.
@@ -333,9 +333,9 @@ public class MyLinkedList<E> extends AbstractList<E> {
 
 		//Return true if there is an element node when going in the backward (tail to head) direction from the current iterator position. Sentinel (dummy) nodes do not count as element nodes.
 		public boolean hasPrevious(){
-			if(this.previousIndex() != -1){
-				return true;
-			} return false;
+			if(left == head){
+				return false;
+			} return true;
 		}
 
 		//Return the next element in the list when going backward, and move the iterator backward by one node.
@@ -359,7 +359,7 @@ public class MyLinkedList<E> extends AbstractList<E> {
 		public int nextIndex(){
 			if(right == tail){
 				return size;
-			} return idx+1;
+			} return idx;
 		}
 
 		//Return the index of the element that would be returned by a call to previous().
@@ -416,6 +416,7 @@ public class MyLinkedList<E> extends AbstractList<E> {
 				left.setNext(null);
 				left.setPrev(null);
 				left = right.getPrev();
+				idx--;
 			} else {
 				right.getNext().setPrev(left);
 				left.setNext(right.getNext());
@@ -425,6 +426,6 @@ public class MyLinkedList<E> extends AbstractList<E> {
 			}
 			size--;
 			canRemoveOrSet = false;
-		} //TODO does idx need to be updated?
+		}
 	}
 }
