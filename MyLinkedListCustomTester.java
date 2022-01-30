@@ -266,6 +266,18 @@ public class MyLinkedListCustomTester {
         iter2.set(34);
         assertEquals(34, iter2.right.getElement());
     }
+    /**
+     * Test the set method when called on empty MLL
+     */
+    @Test(expected = IllegalStateException.class)
+    public void testSet5() {
+        try{
+            iter1.set(91);
+        }catch(IllegalStateException e){
+            throw e;
+        }
+        fail("Exception not catched");
+    }
 
     // ---------------------- remove() ------------------------------
 
@@ -282,11 +294,11 @@ public class MyLinkedListCustomTester {
         fail("Exception not catched");
     }
      /**
-     * Test the remove method when removing is not allowed because set was just 
+     * Test the remove method when removing is not allowed because add was just 
      * called
      */
     @Test(expected = IllegalStateException.class)
-    public void testRemoveTest1() {
+    public void testRemoveTestTwo() {
         iter2.next();
         iter2.add(4);
         try{
@@ -296,21 +308,86 @@ public class MyLinkedListCustomTester {
         }
         fail("Exception not catched");
     }
-
     /**
-     * TODO: test the remove method when [fill in another one here]
+     * Test the remove method when calling remove twice in a row
+     */
+    @Test(expected = IllegalStateException.class)
+    public void testRemoveTestThree() {
+        iter2.next();
+        iter2.remove();
+        try{
+            iter2.remove();
+        }catch(IllegalStateException e){
+            throw e;
+        }
+        fail("Exception not catched");
+    }
+     /**
+     * Test the remove method when having called set beforehand
      */
     @Test
-    public void testRemoveTestTwo() {
-
+    public void testRemoveTestFour() {
+        iter2.next();
+        iter2.set(4);
+        assertEquals(4, iter2.previous());
+        assertEquals(3, intMLL.size());
+        iter2.remove();
+        assertEquals(2, intMLL.size());
     }
 
+    // ---------------------- add() ------------------------------
+
     /**
-     * TODO: test the add method when [...]
+     * Test the add method when data is null
+     */
+    @Test(expected = NullPointerException.class)
+    public void testAdd() {
+        iter2.next();
+        try{
+            iter2.add(null);
+        }catch(NullPointerException e){
+            throw e;
+        }
+        fail("Exception not catched");
+    }
+    /**
+     * Test the add method when called on empty list
      */
     @Test
-    public void testAdd() {
-
+    public void testAdd2() {
+        iter1.add(66);
+        assertEquals(1, emptyMLL.size());
+        assertEquals(66, iter1.left.getElement());
+        assertNull(iter1.right.getElement());
+        assertEquals(66, iter1.previous());
+    }
+    /**
+     * Test the add method when called at the end of MLL
+     */
+    @Test
+    public void testAdd3() {
+        iter2.next();
+        iter2.next();
+        iter2.next();
+        iter2.add(45);
+        assertEquals(45, intMLL.tail.getPrev().getElement());
+        assertEquals(45, iter2.previous());
+        assertEquals(7, iter2.previous());
+        assertEquals(8, iter2.previous());
+        assertEquals(9, iter2.previous());
+    }
+    /**
+     * Test the add method when called multiple times
+     */
+    @Test
+    public void testAdd4() {
+        for(int i = 0; i < 1000; i++){
+            iter1.add(i);
+        }
+        assertEquals(1000, emptyMLL.size());
+        assertEquals(0, emptyMLL.head.getNext().getElement());
+        assertEquals(999, iter1.previous());
+        assertEquals(998, iter1.previous());
     }
 
 }
